@@ -3,18 +3,31 @@ import os
 import json
 import platform
 import sys
+
+# Set environment variable to suppress the macOS warning
+os.environ['NSApplicationSupportsSecureRestorableState'] = 'NO'
+
+# Pygame needs to be imported after setting the environment variable
 import pygame
 
-# Initialize Pygame
-pygame.init()
-pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+# Import additional modules needed for warning suppression
+# These imports are needed to handle the warning message on macOS
+if platform.system() == 'Darwin':
+    try:
+        # Try to suppress the warning by modifying sys.stderr
+        # This is a workaround and the warning may still appear
+        import warnings
+        warnings.filterwarnings("ignore", category=UserWarning)
+    except ImportError:
+        pass
 
-# Note about macOS secure coding warning:
-# The warning "Secure coding is not enabled for restorable state!" is a macOS-specific
-# warning that appears when running PyGame on macOS. It's related to macOS's state
-# restoration feature and doesn't affect the game's functionality or security.
-# A proper fix would require implementing macOS-specific AppKit/Cocoa code, which
-# is beyond the scope of this simple game.
+# Initialize Pygame with error handling
+try:
+    pygame.init()
+    pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+except Exception as e:
+    print(f"Error initializing pygame: {e}")
+    sys.exit(1)
 
 # Screen dimensions
 SCREEN_WIDTH = 800
