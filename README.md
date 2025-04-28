@@ -4,7 +4,9 @@ A simple 2D parachute game where you jump from a plane and navigate to land safe
 
 ## How to Play
 
-1. Run the game: `python parachute_game.py`
+1. Run the game with one of these methods:
+   - Standard: `python3 parachute_game.py`
+   - Without warning (macOS): `python3 hide_warning_launcher.py`
 2. Watch as the plane flies across the top of the screen
 3. Your character will automatically jump out of the plane
 4. Controls:
@@ -43,5 +45,7 @@ This script will create the necessary sound files with simple tones. If you want
 
 ## Notes
 
-- If you see a warning about "Secure coding is not enabled for restorable state" on macOS, this is a harmless warning related to macOS's state restoration feature and doesn't affect gameplay.
+- macOS users may see a warning about "Secure coding is not enabled for restorable state". This is harmless and doesn't affect gameplay. To suppress this warning:
+  - Use the `hide_warning_launcher.py` script to launch the game instead
+  - This script redirects stderr to hide the warning message
 - If sounds aren't playing, make sure you've run the `create_sounds_simple.py` script to generate the sound files.
