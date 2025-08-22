@@ -74,6 +74,12 @@ The browser-based version is now **fully functional**, built with Phaser 3 and f
    python3 -m http.server 8080
    ```
 3. **Open your browser and visit:** `http://localhost:8080`
+
+### Server Management:
+- **To stop the server:** Press `Ctrl+C` in the terminal where it's running
+- **To check if server is running:** `lsof -i :8080` or `ps aux | grep "http.server"`
+- **To force stop:** `pkill -f "http.server"`
+- **Note:** The server stops automatically when you close the terminal
 4. **Game Controls:**
    - Watch the plane fly across the screen
    - Your character automatically jumps from the plane
