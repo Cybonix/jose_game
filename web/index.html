@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Parachute Game - A fun 2D web game where you jump from a plane and navigate to land safely while avoiding obstacles.">
+  <title>Parachute Game - Web Version</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #87ceeb 100%);
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+    }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    #game-header {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      margin-bottom: 20px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    #game-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+      background: linear-gradient(45deg, #fff, #87ceeb, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes titleGlow {
+      from { text-shadow: 0 0 10px rgba(135, 206, 235, 0.5); }
+      to { text-shadow: 0 0 20px rgba(135, 206, 235, 0.8), 0 0 30px rgba(135, 206, 235, 0.3); }
+    }
+    
+    #game-subtitle {
+      font-size: 1rem;
+      font-weight: 300;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+    
+    #game-container {
+      position: relative;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 5;
+    }
+    
+    canvas {
+      display: block;
+      border-radius: 12px;
+    }
+    
+    #game-info {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 14px;
+      text-align: center;
+      z-index: 1000;
+      border: 2px solid rgba(135, 206, 235, 0.5);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(5px);
+    }
+    
+    .game-emoji {
+      font-size: 1.2em;
+      margin-right: 8px;
+    }
+    
+    .controls {
+      margin-top: 8px;
+      font-size: 12px;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+    
+    .control-key {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin: 0 2px;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    
+    #game-stats {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      color: white;
+      z-index: 1000;
+    }
+    
+    .stat-item {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(135, 206, 235, 0.3);
+      text-align: center;
+      min-width: 100px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .stat-label {
+      font-size: 10px;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    
+    @media (max-width: 850px) {
+      #game-container {
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+      
+      #game-info {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        margin-bottom: 15px;
+        background: rgba(0, 0, 0, 0.85);
+        border-radius: 15px;
+      }
+      
+      #game-title {
+        font-size: 2rem;
+      }
+      
+      #game-stats {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        transform: none;
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+    
+    /* Loading animation */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .loading {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-header">
+    <div id="game-title">🪂 PARACHUTE GAME</div>
+    <div id="game-subtitle">Navigate the skies, land safely!</div>
+  </div>
+  
+  <div id="game-info">
+    <div><span class="game-emoji">✨</span>Ready for takeoff!</div>
+    <div class="controls">
+      <span class="control-key">SPACE</span> Deploy Parachute | 
+      <span class="control-key">←</span> <span class="control-key">→</span> Move | 
+      <span class="control-key">R</span> Restart
+    </div>
+  </div>
+  
+  <div id="game-container">
+    <!-- Game canvas will be inserted here by Phaser -->
+  </div>
+  
+  <div id="game-stats">
+    <div class="stat-item">
+      <div class="stat-label">Wind</div>
+      <div class="stat-value" id="wind-display">---</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Altitude</div>
+      <div class="stat-value" id="altitude-display">---</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Status</div>
+      <div class="stat-value" id="status-display">Ready</div>
+    </div>
+  </div>
+  
+  <!-- Load Phaser 3 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
